@@ -32,14 +32,6 @@ class Layout
 	protected $layout_footer = "template/footer";
 
 	/**
-	 * Page Title
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $layout_title = null;
-
-	/**
 	 * Page Description [Meta]
 	 *
 	 * @access protected
@@ -63,9 +55,6 @@ class Layout
 	 */
 	protected $layout_scripts = null;
 
-	// sitename variable from settings file
-	var $webtitle = null;
-
 	/**
 	 * Class Construct
 	 *
@@ -77,9 +66,6 @@ class Layout
 	public function __construct() 
 	{
 		$this->CI =& get_instance();
-		$this->webtitle = $this->CI->config->item('site_name');
-		// Change SITE TITLE to name of your site and delete this comment when done
-		if($this->webtitle == null) { $this->webtitle = "SITE TITLE"; }
 	}
 
 	/**
@@ -110,22 +96,6 @@ class Layout
 		return $this;
 	}
 
-	/**
-	 * Set the page title
-	 *
-	 * Sets the <title> element of your page
-	 *
-	 * @access public
-	 * @param string $title
-	 * @return object
-	 */
-
-	public function set_title($title) 
-	{
-		$this->layout_title = $title;
-
-		return $this;
-	}
 
 	/**
 	 * Set the meta description
@@ -217,7 +187,6 @@ class Layout
 			// our basic template data
 			$send_data = array
 			(
-				'header_title' => $this->webtitle . $this->layout_title,
 				'header_description' => $this->layout_description,
 				'header_keywords' => $this->layout_keywords,
 				'header_scripts' => $this->layout_scripts
