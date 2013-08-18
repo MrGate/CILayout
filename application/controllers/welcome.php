@@ -16,8 +16,6 @@ class Welcome extends CI_Controller {
 
 	public function index()
 	{
-	
-		$this->layout->set_title(" | Example to add on to the default title"); // adds to site_name from settings
 		$this->layout->set_header("template/header"); // you can change the template you use
 		$this->layout->set_footer("template/footer"); // you can change the template you use
 		$this->layout->set_description("Example description to add to the meta"); // example of meta description
