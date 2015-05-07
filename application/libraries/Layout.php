@@ -15,6 +15,9 @@ class Layout
 	 */
 	protected $CI;
 
+
+	protected $layout_title = "Your Title";
+
 	/**
 	 * Template header
 	 * has a default value
@@ -37,7 +40,7 @@ class Layout
 	 * @access protected
 	 * @var string
 	 */
-	protected $layout_description = null;
+	protected $layout_description = "";
 
 	/**
 	 * Page Keywords [Meta]
@@ -45,7 +48,7 @@ class Layout
 	 * @access protected
 	 * @var string
 	 */
-	protected $layout_keywords = null;
+	protected $layout_keywords = "";
 
 	/**
 	 * Javascripts and other scripts for the header
@@ -53,7 +56,15 @@ class Layout
 	 * @access protected
 	 * @var string
 	 */
-	protected $layout_scripts = null;
+	protected $header_scripts = null;
+
+	/**
+	 * Javascripts and other scripts for the header
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $footer_scripts = null;
 
 	/**
 	 * Class Construct
@@ -66,6 +77,20 @@ class Layout
 	public function __construct() 
 	{
 		$this->CI =& get_instance();
+	}
+
+
+	public function set_title($title, $append = true)
+	{
+		if($append)
+		{
+			$this->layout_title .= $title;
+		}
+		else
+		{
+			$this->layout_title = $title;
+		}
+		return $this;
 	}
 
 	/**
@@ -135,9 +160,23 @@ class Layout
 	 * @return object
 	 */
 
-	public function set_scripts($scripts) 
+	public function set_hscripts($scripts) 
 	{
-		$this->layout_scripts .= $scripts;
+		$this->header_scripts .= $scripts;
+		return $this;
+	}
+
+	/**
+	 * Old version to set scripts
+	 *
+	 * @access public
+	 * @param string $scripts
+	 * @return object
+	 */
+
+	public function set_fscripts($scripts) 
+	{
+		$this->footer_scripts .= $scripts;
 		return $this;
 	}
 
@@ -146,12 +185,63 @@ class Layout
 	 *
 	 * @access public
 	 * @param string $js
+	 * @param string $where
+	 * @param boolen $location
 	 * @return object
 	 */
 
-	public function set_js($js)
+	public function set_js($js, $where = "footer", $location = true)
 	{
-		$this->layout_scripts .= "<script src='".base_url()."assets/js/".$js."'></script>";
+		if($location == true)
+		{
+			switch($where)
+			{
+				case 'header':
+					if(is_array($js)) {
+						foreach($js as $loc)
+						{
+							$this->header_scripts .= "<script src='/assets/js/".$loc."'></script>";
+						}
+					}else{
+						$this->header_scripts .= "<script src='/assets/js/".$js."'></script>";
+					}
+				break;
+				case 'footer':
+					if(is_array($js)) {
+						foreach($js as $loc)
+						{
+							$this->footer_scripts .= "<script src='/assets/js/".$loc."'></script>";
+						}
+					}else{
+						$this->footer_scripts .= "<script src='/assets/js/".$js."'></script>";
+					}
+				break;
+			}
+		}else{
+			switch($where)
+			{
+				case 'header':
+					if(is_array($js)) {
+						foreach($js as $loc)
+						{
+							$this->header_scripts .= $loc;
+						}
+					}else{
+						$this->header_scripts .= $js;
+					}
+				break;
+				case 'footer':
+					if(is_array($js)) {
+						foreach($js as $loc)
+						{
+							$this->footer_scripts .= $loc;
+						}
+					}else{
+						$this->footer_scripts .= $js;
+					}
+				break;
+			}
+		}
 		return $this;
 	}
 
@@ -160,12 +250,34 @@ class Layout
 	 *
 	 * @access public
 	 * @param string $js
+	 * @param boolen $location
 	 * @return object
 	 */
 
-	public function set_css($css)
+	public function set_css($css, $location = true)
 	{
-		$this->layout_scripts .= "<link href='assets/css/".$css."' rel='stylesheet'>";
+		if($location == true)
+		{
+			if(is_array($css))
+			{
+				foreach($css as $loc)
+				{
+					$this->header_scripts .= "<link href='/assets/css/".$loc."' rel='stylesheet'>";
+				}
+			}else{
+				$this->header_scripts .= "<link href='/assets/css/".$css."' rel='stylesheet'>";
+			}
+		}else{
+			if(is_array($css))
+			{
+				foreach($css as $loc)
+				{
+					$this->header_scripts .= $loc;
+				}
+			}else{
+				$this->header_scripts .= $loc;
+			}
+		}
 		return $this;
 	}
 
@@ -187,9 +299,12 @@ class Layout
 			// our basic template data
 			$send_data = array
 			(
+				'header_title' => $this->layout_title,
 				'header_description' => $this->layout_description,
 				'header_keywords' => $this->layout_keywords,
-				'header_scripts' => $this->layout_scripts
+				'header_scripts' => $this->header_scripts,
+				'footer_scripts' => $this->footer_scripts,
+				'baseurl' => base_url()
 			);
 
 			if (is_array($content_var))
